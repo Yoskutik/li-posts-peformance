@@ -1,0 +1,116 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+    <script>
+      const create = (name, params, children) => {
+        const element = document.createElement(name);
+
+        Object.entries(params).forEach(([key, value]) => {
+          element.setAttribute(key, value);
+        });
+
+        if (children) {
+          element.append(...(Array.isArray(children) ? children.filter(Boolean) : [children]));
+        }
+
+        return element;
+      };
+
+      class CardComponent extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: 'open' });
+        }
+
+        connectedCallback() {
+          const title = this.getAttribute('title');
+
+          const card = (
+            create('article', {}, [
+              create('header', {}, create('h2', {}, title)),
+
+              create('form', {}, [
+                create('label', {}, [
+                  'Input',
+                  ' ',
+                  create('input', { type: 'text' }),
+                ]),
+
+                create('footer', {}, [
+                  create('button', { type: 'reset' }, 'Reset'),
+                  create('button', { type: 'submit' }, 'Submit'),
+                ]),
+              ]),
+            ])
+          );
+
+          this.shadowRoot.append(card);
+        }
+      }
+
+      class CardComponent2 extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: 'open' });
+        }
+
+        connectedCallback() {
+          const card = (
+            create('article', {}, [
+              create('header', {}, create('h2', {}, create('slot', { name: 'title' }))),
+
+              create('form', {}, [
+                create('label', {}, [
+                  create('strong', {}, 'Input'),
+                  ' ',
+                  create('input', { type: 'text' }),
+                ]),
+
+                create('footer', {}, [
+                  create('button', { type: 'reset' }, 'Reset'),
+                  create('button', { type: 'submit' }, 'Submit'),
+                ]),
+              ]),
+            ])
+          );
+
+          this.shadowRoot.append(card);
+        }
+      }
+
+      customElements.define('x-card', CardComponent);
+      customElements.define('x-card2', CardComponent2);
+    </script>
+</head>
+<body>
+<main>
+    <h1>The Website</h1>
+
+    <article>
+        <header>
+            <h2>Card heading 1</h2>
+        </header>
+
+        <form>
+            <label>
+                Input
+                <input type="text">
+            </label>
+
+            <footer>
+                <button type="reset">Reset</button>
+                <button type="submit">Submit</button>
+            </footer>
+        </form>
+    </article>
+
+    <x-card title="Card heading 2"></x-card>
+
+    <x-card2>
+        <h2 slot="title">Card heading 2</h2>
+    </x-card2>
+</main>
+</body>
+</html>

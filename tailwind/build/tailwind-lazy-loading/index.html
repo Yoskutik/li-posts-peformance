@@ -1,0 +1,46 @@
+<!doctype html><html><head><meta charset="UTF-8"><script>window.loadingTime = performance.now()</script><script defer="defer" src="main.js"></script><link href="main.css" rel="stylesheet"></head><body><div id="root"></div><script>const KEY = `performance-${location.pathname}`;
+  const ALL_ASSETS = JSON.parse('["/tailwind-many-classes/index.html","/tailwind-many-classes/ssg.html","/modules-many-classes/index.html","/modules-many-classes/ssg.html","/tailwind-lazy-loading/index.html","/tailwind-lazy-loading/ssg.html","/modules-lazy-loading/index.html","/modules-lazy-loading/ssg.html","/tailwind-ds/index.html","/tailwind-ds/ssg.html","/modules-ds/index.html","/modules-ds/ssg.html","/combined-ds/index.html","/combined-ds/ssg.html"]');
+  const currentAssetIndex = ALL_ASSETS.findIndex(it => it === location.pathname);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    requestAnimationFrame(() => {
+      const data = JSON.parse(localStorage.getItem(KEY) || '[]');
+
+      if (data.length < 10) {
+        data.push(Math.round(performance.now() - window.loadingTime));
+        localStorage.setItem(KEY, JSON.stringify(data));
+        setTimeout(() => location.reload(), 1000);
+      } else if (currentAssetIndex < ALL_ASSETS.length - 1) {
+        setTimeout(() => location.pathname = ALL_ASSETS[currentAssetIndex + 1], 1000);
+      } else {
+        function median(values) {
+          values = [...values].sort((a, b) => a - b);
+          const half = Math.floor(values.length / 2);
+          return (values.length % 2 ? values[half] : (values[half - 1] + values[half]) / 2);
+        }
+
+        const allData = ALL_ASSETS.map(it => {
+          const data = JSON.parse(localStorage.getItem(`performance-${it}`) || '[]');
+          return { name: it, renderingTime: median(data) };
+        });
+
+        const groups = Object.groupBy(allData, it => it.name.replace(/^\/(tailwind|modules|combined)/, '').replace(/\/(ssg|index)\.html$/, ''));
+
+        const f = new Intl.NumberFormat().format;
+        Object.entries(groups).forEach(([name, items]) => {
+          console.log(name.replace(/([\-/][a-z])/g, (match, p1) => ` ${p1.toUpperCase()}`).replace(/[\-\/]/g, '').trim());
+
+          const log = (name) => {
+            const spa = items.find(it => it.name.startsWith(`/${name.toLowerCase()}`) && it.name.endsWith('index.html'));
+            const ssg = items.find(it => it.name.startsWith(`/${name.toLowerCase()}`) && it.name.endsWith('ssg.html'));
+            if (!spa && !ssg) return;
+            console.log(`* ${`${name}:`.padEnd(9, ' ')} ${f(spa?.renderingTime).padStart(5, ' ')}ms / ${f(ssg?.renderingTime).padStart(5, ' ')}ms`);
+          };
+
+          log('Tailwind');
+          log('Modules');
+          log('Combined');
+        });
+      }
+    });
+  });</script></body></html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script>
+      window.start = performance.now();
+      document.addEventListener('DOMContentLoaded', () => {
+        requestAnimationFrame(() => {
+          const match = location.href.match(/:\d+\/(.+)\.html/);
+          const params = new URLSearchParams(location.search);
+
+          fetch('/execution', {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json;charset=UTF-8',
+            },
+            body: JSON.stringify({
+              duration: performance.now() - window.start,
+              sessionId: params.get('sessionId'),
+              browser: params.get('browser'),
+              feature: match[1],
+            }),
+          }).then(() => {
+            window.close();
+          });
+        });
+      });
+    </script>
+</head>
+<body>
+<script>
+<%= compilation.assets[htmlWebpackPlugin.options.asset + '.js'].source() %>
+<%
+  // Avoiding javascript files emit
+  delete compilation.assets[htmlWebpackPlugin.options.asset + '.js'];
+%>
+</script>
+</body>
+</html>

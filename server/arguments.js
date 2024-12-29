@@ -11,17 +11,6 @@ parser.add_argument('-v', '--version', {
   version,
 });
 
-parser.add_argument('-m', '--mode', {
-  choices: ['execution', 'parsing'],
-  help: 'benchmark mode',
-  required: true,
-});
-
-parser.add_argument('-O', '--os', {
-  choices: ['android'],
-  help: 'OS of mobile',
-});
-
 parser.add_argument('-p', '--port', {
   help: 'port to run benchmark at',
   default: 8080,
@@ -30,8 +19,14 @@ parser.add_argument('-p', '--port', {
 
 parser.add_argument('-d', '--delay', {
   help: 'delay between test iterations',
-  default: 200,
+  default: 350,
   type: Number,
+});
+
+parser.add_argument('-D', '--dir', {
+  help: 'directory',
+  required: true,
+  type: String,
 });
 
 parser.add_argument('-n', '--iterations', {

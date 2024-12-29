@@ -1,0 +1,45 @@
+@for $i from 0 through 1249 {
+  .block#{$i} {
+    display: flex;
+    padding: 1rem;
+    border: 1px solid;
+  }
+
+  .card#{$i} {
+    width: 15rem;
+  }
+
+  .form#{$i} {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1rem;
+    width: 13rem;
+  }
+
+  .checkbox#{$i} {
+    margin-top: 0.5rem;
+    margin-left: auto;
+  }
+
+  .radios#{$i} {
+    padding-left: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .row#{$i} {
+    margin-top: 0.5rem;
+  }
+
+  .hr#{$i} {
+    width: 100%;
+  }
+
+  .submit#{$i} {
+    margin-left: 0.5rem;
+  }
+
+  .footer#{$i} {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
